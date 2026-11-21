@@ -8,6 +8,9 @@ import { InstructorCoursesController } from './instructor-courses.controller.js'
 import { InstructorChaptersController } from './instructor-chapters.controller.js';
 import { InstructorLessonsController } from './instructor-lessons.controller.js';
 import { InstructorQuizzesController } from './instructor-quizzes.controller.js';
+import { InstructorClassesService } from './instructor-classes.service.js';
+import { InstructorClassesController } from './instructor-classes.controller.js';
+
 
 @Module({
   imports: [OwnershipModule],
@@ -16,12 +19,14 @@ import { InstructorQuizzesController } from './instructor-quizzes.controller.js'
     InstructorChaptersService,
     InstructorLessonsService,
     InstructorQuizzesService,
+    InstructorClassesService
   ],
   controllers: [
     InstructorCoursesController,
     InstructorChaptersController,
     InstructorLessonsController,
     InstructorQuizzesController,
+    InstructorClassesController
   ],
 })
 export class InstructorModule {}
