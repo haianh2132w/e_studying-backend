@@ -7,14 +7,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum SettingType { ROLE CATEGORY }
-enum ContentStatus { DRAFT PUBLISHED }
-enum LessonType { VIDEO DOCUMENT LINK }
-enum EnrollmentStatus { PENDING ACTIVE CANCELLED }
-enum ClassStudentStatus { ACTIVE INACTIVE }
-enum PaymentMethod { FREE VNPAY }
-enum PaymentStatus { PENDING SUCCESS FAILED }
-enum TokenType { VERIFY_EMAIL RESET_PASSWORD }
+enum SettingType { 
+  ROLE 
+  CATEGORY 
+}
+enum ContentStatus { 
+  DRAFT 
+  PUBLISHED 
+}
+enum LessonType { 
+  VIDEO 
+  DOCUMENT 
+  LINK
+}
+enum EnrollmentStatus { 
+  PENDING 
+  ACTIVE 
+  CANCELLED 
+}
+enum ClassStudentStatus { 
+  ACTIVE 
+  INACTIVE 
+}
+enum PaymentMethod { 
+  FREE 
+  VNPAY 
+}
+enum PaymentStatus { 
+  PENDING 
+  SUCCESS 
+  FAILED 
+}
+enum TokenType { 
+  VERIFY_EMAIL 
+  RESET_PASSWORD 
+}
 
 model Setting {
   id          Int         @id @default(autoincrement())
