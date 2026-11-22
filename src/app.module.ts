@@ -23,6 +23,7 @@ import { ProgressModule } from './progress/progress.module.js';
 import { QuizzesModule } from './quizzes/quizzes.module.js';
 import { OwnershipModule } from './ownership/ownership.module.js';
 import { InstructorModule } from './instructor/instructor.module.js';
+import { AdminModule } from './admin/admin.module.js';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -42,7 +43,8 @@ import { InstructorModule } from './instructor/instructor.module.js';
     ProgressModule,
     QuizzesModule,
     OwnershipModule,
-    InstructorModule
+    InstructorModule,
+    AdminModule
   ],
   controllers: [AppController],
   providers: [AppService,
