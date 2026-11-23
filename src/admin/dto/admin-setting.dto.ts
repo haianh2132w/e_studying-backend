@@ -37,7 +37,7 @@ export class UpdateSettingDto {
   description?: string;
 }
 
-// ─── Query ────────────────────────────────────────────────────────────────────
+//  Query 
 export class SettingQueryDto extends PaginationDto {
   @IsOptional() @IsString() @MaxLength(100)
   q?: string;

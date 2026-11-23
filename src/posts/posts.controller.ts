@@ -1,7 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { Public } from '../common/decorators/public.decorator.js';
 import { PostsService } from './posts.service.js';
-import { PostQueryDto } from './dto/post-query.dto.js';
+import { PostQueryDto } from './dto/post.dto.js';
 
 @Public()
 @Controller('posts')

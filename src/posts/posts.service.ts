@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { PostQueryDto } from './dto/post-query.dto.js';
+import { PostQueryDto } from './dto/post.dto.js';
 
 // Danh sách không trả content (nội dung dài), chỉ trả thông tin tóm tắt
 const POST_LIST_SELECT = {

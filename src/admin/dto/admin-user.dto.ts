@@ -12,7 +12,7 @@ import {
 import { PaginationDto } from '../../common/dto/pagination.dto.js';
 import { PASSWORD_MESSAGE, PASSWORD_REGEX } from '../../common/constants/password.js';
 
-// ─── Create ───────────────────────────────────────────────────────────────────
+//  Create 
 export class CreateUserDto {
   @IsEmail() @MaxLength(255)
   email: string;
@@ -34,7 +34,7 @@ export class CreateUserDto {
   role: 'STUDENT' | 'INSTRUCTOR' | 'ADMIN';
 }
 
-// ─── Update ───────────────────────────────────────────────────────────────────
+//  Update 
 export class UpdateUserDto {
   @IsOptional()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
@@ -56,13 +56,13 @@ export class UpdateUserDto {
   role?: 'STUDENT' | 'INSTRUCTOR' | 'ADMIN';
 }
 
-// ─── Update status ────────────────────────────────────────────────────────────
+//  Update status 
 export class UpdateUserStatusDto {
   @IsBoolean()
   isActive: boolean;
 }
 
-// ─── Query ────────────────────────────────────────────────────────────────────
+//  Query 
 export class UserQueryDto extends PaginationDto {
   @IsOptional() @IsString() @MaxLength(100)
   q?: string;

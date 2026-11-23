@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { PaginationDto } from '../../common/dto/pagination.dto.js';
 
-// ─── Audit log query ──────────────────────────────────────────────────────────
+// Audit log query 
 export class AuditQueryDto extends PaginationDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(1)
   userId?: number;
@@ -29,7 +29,7 @@ export class AuditQueryDto extends PaginationDto {
   to?: string;
 }
 
-// ─── Post query (admin) ───────────────────────────────────────────────────────
+//Post query (admin)
 export class AdminPostQueryDto extends PaginationDto {
   @IsOptional() @IsString() @MaxLength(100)
   q?: string;
@@ -44,7 +44,7 @@ export class AdminPostQueryDto extends PaginationDto {
   categoryId?: number;
 }
 
-// ─── Delete post (with reason) ────────────────────────────────────────────────
+//Delete post (with reason)
 export class DeletePostDto {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString() @Length(5, 500)

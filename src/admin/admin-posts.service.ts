@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { AuthUser } from '../common/types/auth-user.js';
-import { AdminPostQueryDto } from './dto/admin-misc.dto.js';
+import { AdminPostQueryDto } from './dto/admin-audit-post.dto.js';
 
 const POST_SUMMARY = {
   id: true,
@@ -17,7 +17,7 @@ const POST_SUMMARY = {
 
 @Injectable()
 export class AdminPostsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   //  danh sách mọi bài viết (cả nháp) 
   async list(query: AdminPostQueryDto) {

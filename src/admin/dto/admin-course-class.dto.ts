@@ -14,7 +14,7 @@ import {
 } from 'class-validator';
 import { PaginationDto } from '../../common/dto/pagination.dto.js';
 
-// ─── Shared query (courses & classes) ────────────────────────────────────────
+//  Shared query (courses & classes) 
 export class AdminListQueryDto extends PaginationDto {
   @IsOptional() @IsString() @MaxLength(100)
   q?: string;
@@ -31,13 +31,13 @@ export class AdminListQueryDto extends PaginationDto {
   isActive?: boolean;
 }
 
-// ─── Shared toggle active ─────────────────────────────────────────────────────
+//  Shared toggle active 
 export class UpdateActiveDto {
   @IsBoolean()
   isActive: boolean;
 }
 
-// ─── Course: Create ───────────────────────────────────────────────────────────
+//  Course: Create 
 export class CreateCourseDto {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString() @Length(2, 200)
@@ -74,7 +74,7 @@ export class CreateCourseDto {
   instructorId: number;
 }
 
-// ─── Course: Update ───────────────────────────────────────────────────────────
+//  Course: Update 
 export class UpdateCourseDto {
   @IsOptional()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
@@ -113,7 +113,7 @@ export class UpdateCourseDto {
   instructorId?: number;
 }
 
-// ─── Class: Create ────────────────────────────────────────────────────────────
+// Class: Create 
 export class CreateClassDto {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString() @Length(2, 200)
@@ -159,7 +159,7 @@ export class CreateClassDto {
   instructorId: number;
 }
 
-// ─── Class: Update ────────────────────────────────────────────────────────────
+//Class: Update 
 export class UpdateClassDto {
   @IsOptional()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))

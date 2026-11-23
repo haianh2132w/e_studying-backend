@@ -9,7 +9,7 @@ import { AdminPostsService } from './admin-posts.service.js';
 import { AdminAuditService } from './admin-audit.service.js';
 import { SettingQueryDto, CreateSettingDto, UpdateSettingDto } from './dto/admin-setting.dto.js';
 import { UpdateActiveDto } from './dto/admin-course-class.dto.js';
-import { AdminPostQueryDto, DeletePostDto, AuditQueryDto } from './dto/admin-misc.dto.js';
+import { AdminPostQueryDto, DeletePostDto, AuditQueryDto } from './dto/admin-audit-post.dto.js';
 
 @Roles('ADMIN')
 @Controller('admin')
@@ -18,7 +18,7 @@ export class AdminManageController {
     private readonly settings: AdminSettingsService,
     private readonly posts: AdminPostsService,
     private readonly audit: AdminAuditService,
-  ) {}
+  ) { }
 
   // ---------- Cài đặt ----------
   @Get('settings')

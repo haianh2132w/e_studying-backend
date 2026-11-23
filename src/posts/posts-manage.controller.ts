@@ -1,13 +1,21 @@
 import {
-  Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import type { AuthUser } from '../common/types/auth-user.js';
 import { PostsManageService } from './posts-manage.service.js';
-import { CreatePostDto } from './dto/create-post.dto.js';
-import { UpdatePostDto } from './dto/update-post.dto.js';
+import { CreatePostDto, UpdatePostDto } from './dto/post.dto.js';
 
 @Controller()
 export class PostsManageController {

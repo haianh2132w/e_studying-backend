@@ -1,11 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { AuthUser } from '../common/types/auth-user.js';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import { sanitizeContent, toPlainText } from '../common/utils/sanitize.js';
-import { CreatePostDto } from './dto/create-post.dto.js';
-import { UpdatePostDto } from './dto/update-post.dto.js';
+import { CreatePostDto, UpdatePostDto } from './dto/post.dto.js';
 
 const POST_SUMMARY = {
   id: true,
@@ -17,15 +20,19 @@ const POST_SUMMARY = {
   category: { select: { id: true, name: true } },
 } satisfies Prisma.PostSelect;
 
-const POST_FULL = { ...POST_SUMMARY, content: true } satisfies Prisma.PostSelect;
+const POST_FULL = {
+  ...POST_SUMMARY,
+  content: true,
+} satisfies Prisma.PostSelect;
 
 @Injectable()
 export class PostsManageService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   private cleanContent(html: string) {
     const clean = sanitizeContent(html);
-    if (!toPlainText(clean)) throw new BadRequestException('Nội dung bài viết không được để trống');
+    if (!toPlainText(clean))
+      throw new BadRequestException('Nội dung bài viết không được để trống');
     return clean;
   }
 
@@ -71,7 +78,8 @@ export class PostsManageService {
 
     const data: Prisma.PostUncheckedUpdateInput = {};
     if (dto.title !== undefined) data.title = dto.title;
-    if (dto.content !== undefined) data.content = this.cleanContent(dto.content);
+    if (dto.content !== undefined)
+      data.content = this.cleanContent(dto.content);
     if (dto.categoryId !== undefined) data.categoryId = dto.categoryId;
     if (dto.status !== undefined && dto.status !== current.status) {
       data.status = dto.status;
@@ -88,20 +96,30 @@ export class PostsManageService {
 
   // ---------- Xóa ----------
   async remove(user: AuthUser, id: number) {
-    const result = await this.prisma.post.deleteMany({ where: { id, authorId: user.id } });
-    if (result.count === 0) throw new NotFoundException('Không tìm thấy bài viết');
+    const result = await this.prisma.post.deleteMany({
+      where: { id, authorId: user.id },
+    });
+    if (result.count === 0)
+      throw new NotFoundException('Không tìm thấy bài viết');
     return { message: 'Đã xóa bài viết' };
   }
 
   // ---------- Danh sách của tôi ----------
-  async listMine(userId: number, status: 'PUBLISHED' | 'DRAFT', { page, limit }: PaginationDto) {
+  async listMine(
+    userId: number,
+    status: 'PUBLISHED' | 'DRAFT',
+    { page, limit }: PaginationDto,
+  ) {
     const where: Prisma.PostWhereInput = { authorId: userId, status };
     const [items, total] = await this.prisma.$transaction([
       this.prisma.post.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: status === 'PUBLISHED' ? { publishedAt: 'desc' } : { updatedAt: 'desc' },
+        orderBy:
+          status === 'PUBLISHED'
+            ? { publishedAt: 'desc' }
+            : { updatedAt: 'desc' },
         select: POST_SUMMARY,
       }),
       this.prisma.post.count({ where }),
