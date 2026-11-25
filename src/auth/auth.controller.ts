@@ -1,4 +1,4 @@
-import { Body, Controller, Post, HttpCode,Req,Res } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, Req, Res } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { Public } from '../common/decorators/public.decorator.js';
 import { SkipCsrf } from '../common/decorators/skip-csrf.decorator.js';
@@ -11,10 +11,11 @@ import * as crypto from 'crypto';
 import { LoginDto } from './dto/login.dto.js';
 import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
 import { ResetPasswordDto } from './dto/reset-password.dto.js';
+import { Ip } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  constructor(private readonly auth: AuthService) { }
 
   @Public() @SkipCsrf()
   @Throttle({ default: { limit: 5, ttl: 60000 } })
@@ -37,7 +38,7 @@ export class AuthController {
     return this.auth.resendCode(dto);
   }
 
-   private setAuthCookies(res: Response, access: string, refresh: string) {
+  private setAuthCookies(res: Response, access: string, refresh: string) {
     const base = {
       sameSite: 'lax' as const,
       secure: process.env.NODE_ENV === 'production',
@@ -56,8 +57,12 @@ export class AuthController {
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @HttpCode(200)
   @Post('login')
-  async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-    const { access, refresh, user } = await this.auth.login(dto);
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+    @Ip() ip: string,
+  ) {
+    const { access, refresh, user } = await this.auth.login(dto,ip);
     this.setAuthCookies(res, access, refresh);
     return { user };
   }
@@ -83,7 +88,7 @@ export class AuthController {
     return { message: 'Đã đăng xuất' };
   }
 
-    @Public() @SkipCsrf()
+  @Public() @SkipCsrf()
   @Throttle({ default: { limit: 3, ttl: 60000 } })
   @HttpCode(200)
   @Post('forgot-password')
@@ -98,5 +103,8 @@ export class AuthController {
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.auth.resetPassword(dto);
   }
+
+
+
 }
 

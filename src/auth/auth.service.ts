@@ -13,12 +13,13 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto.js';
 import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
 import { ResetPasswordDto } from './dto/reset-password.dto.js';
-
+import { AuditService } from "../audit/audit.service.js";
+import { audit } from "rxjs";
 @Injectable()
 export class AuthService {
     // Hash giả để bcrypt.compare luôn chạy khi user không tồn tại (chống timing attack)
     private readonly dummyHash = bcrypt.hashSync('no-user', 12);
-
+    private readonly audit: AuditService;
     constructor(
         private readonly prisma: PrismaService,
         private readonly mail: MailService,
@@ -131,7 +132,7 @@ export class AuthService {
         return { access, refresh };
     }
 
-    async login(dto: LoginDto) {
+    async login(dto: LoginDto, ip?: string) {
         const id = dto.identifier.trim();
         const user = await this.prisma.user.findFirst({
             where: { OR: [{ email: id.toLowerCase() }, { username: id }] },
@@ -141,14 +142,35 @@ export class AuthService {
         // Luôn chạy bcrypt.compare, kể cả khi user không tồn tại, để thời gian phản hồi giống nhau
         const ok = await bcrypt.compare(dto.password, user?.passwordHash ?? this.dummyHash);
         if (!user || !ok) {
+            await this.audit.log({
+                userId: user?.id ?? null,
+                action: 'LOGIN_FAILED',
+                entity: 'Auth',
+                ip,
+                metadata: { reason: user ? 'BAD_PASSWORD' : 'UNKNOWN_USER' },
+            });
             throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không đúng');
         }
-        if (!user.isActive) throw new ForbiddenException('Tài khoản đã bị vô hiệu hóa');
-        if (!user.emailVerified) {
+
+        if (!user.isActive || !user.emailVerified) {
+            await this.audit.log({
+                userId: user.id,
+                action: 'LOGIN_FAILED',
+                entity: 'Auth',
+                ip,
+                metadata: { reason: !user.isActive ? 'INACTIVE' : 'UNVERIFIED' }
+            });
+            if (!user.isActive)
+                throw new ForbiddenException('Tài khoản đã bị vô hiệu hóa');
             throw new ForbiddenException('Vui lòng xác thực email trước khi đăng nhập');
-        }
+
+        };
+
 
         const tokens = await this.issueTokens(user);
+        if (user.role.name !=='STUDENT'){
+            await this.audit.log({userId:user.id,action:'LOGIN_SUCCESS',entity:'Auth',ip})
+        }
         return {
             ...tokens,
             user: {

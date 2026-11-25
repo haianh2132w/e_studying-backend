@@ -38,12 +38,15 @@ export class InstructorLessonsService {
     type: LessonType,
     resourceUrl: string | null | undefined,
     content: string | null | undefined,
+    hasFile: boolean,
   ) {
     if ((type === 'VIDEO' || type === 'LINK') && !resourceUrl) {
       throw new BadRequestException('Bài học dạng VIDEO hoặc LINK cần có resourceUrl');
     }
-    if (type === 'DOCUMENT' && !resourceUrl && !content) {
-      throw new BadRequestException('Bài học dạng DOCUMENT cần có nội dung hoặc resourceUrl');
+    if (type === 'DOCUMENT' && !resourceUrl && !content && !hasFile) {
+      throw new BadRequestException(
+        'Bài học dạng DOCUMENT cần có nội dung, resourceUrl hoặc file đính kèm',
+      );
     }
   }
 
@@ -52,12 +55,12 @@ export class InstructorLessonsService {
     return this.prisma.lesson.findUniqueOrThrow({ where: { id: lessonId }, select: LESSON_SELECT });
   }
 
-  // UC 34: thêm bài học. Vị trí do server tính (cuối chương)
+  // thêm bài học. Vị trí do server tính (cuối chương)
   async create(user: AuthUser, chapterId: number, dto: CreateLessonDto) {
     await this.ownership.assertOwnsChapter(user, chapterId);
     const type = dto.type ?? 'VIDEO';
     const content = dto.content !== undefined ? this.clean(dto.content) : null;
-    this.assertValid(type, dto.resourceUrl, content);
+    this.assertValid(type, dto.resourceUrl, content, false);
 
     const last = await this.prisma.lesson.aggregate({
       where: { chapterId },
@@ -79,19 +82,19 @@ export class InstructorLessonsService {
     });
   }
 
-  // UC 35: sửa bài học
+  // sửa bài học
   async update(user: AuthUser, lessonId: number, dto: UpdateLessonDto) {
     await this.ownership.assertOwnsLesson(user, lessonId);
     const current = await this.prisma.lesson.findUniqueOrThrow({
       where: { id: lessonId },
-      select: { type: true, content: true, resourceUrl: true },
+      select: { type: true, content: true, resourceUrl: true, fileKey: true },
     });
 
     // Kiểm tra trạng thái SAU KHI sửa (gộp giá trị cũ và mới)
     const type = dto.type ?? current.type;
     const content = dto.content !== undefined ? this.clean(dto.content) : current.content;
     const resourceUrl = dto.resourceUrl !== undefined ? dto.resourceUrl : current.resourceUrl;
-    this.assertValid(type, resourceUrl, content);
+    this.assertValid(type, resourceUrl, content, !!current.fileKey);
 
     return this.prisma.lesson.update({
       where: { id: lessonId },

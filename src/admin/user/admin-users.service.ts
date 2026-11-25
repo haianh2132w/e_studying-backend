@@ -1,11 +1,22 @@
 import {
-    BadRequestException, ConflictException, Injectable, NotFoundException,
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { AuthUser } from '../common/types/auth-user.js';
-import { CreateUserDto, UpdateUserDto, UpdateUserStatusDto, UserQueryDto } from './dto/admin-user.dto.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
+import { AuthUser } from '../../common/types/auth-user.js';
+import {
+    CreateUserDto,
+    UpdateUserDto,
+    UpdateUserStatusDto,
+    UserQueryDto,
+} from '../dto/admin-user.dto.js';
+import { AuditService } from '../../audit/audit.service.js';
+
+
 
 // Chỉ chọn trường an toàn. TUYỆT ĐỐI không có passwordHash
 const USER_SELECT = {
@@ -26,10 +37,13 @@ const toDto = ({ role, ...u }: UserRow) => ({ ...u, role: role.name });
 
 @Injectable()
 export class AdminUsersService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService,private readonly audit: AuditService) { }
 
     private async findOrThrow(id: number) {
-        const user = await this.prisma.user.findUnique({ where: { id }, select: USER_SELECT });
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+            select: USER_SELECT,
+        });
         if (!user) throw new NotFoundException('Không tìm thấy người dùng');
         return user;
     }
@@ -67,7 +81,13 @@ export class AdminUsersService {
             }),
             this.prisma.user.count({ where }),
         ]);
-        return { items: rows.map(toDto), total, page, limit, totalPages: Math.ceil(total / limit) };
+        return {
+            items: rows.map(toDto),
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+        };
     }
 
     async getOne(id: number) {
@@ -98,7 +118,7 @@ export class AdminUsersService {
         return toDto(user);
     }
 
-    //sửa tài khoản 
+    //sửa tài khoản
     async update(actor: AuthUser, id: number, dto: UpdateUserDto) {
         const target = await this.findOrThrow(id);
 
@@ -109,7 +129,8 @@ export class AdminUsersService {
 
         const email = dto.email?.toLowerCase().trim();
         const emailChanged = email !== undefined && email !== target.email;
-        const usernameChanged = dto.username !== undefined && dto.username !== target.username;
+        const usernameChanged =
+            dto.username !== undefined && dto.username !== target.username;
         if (emailChanged || usernameChanged) {
             const dup = await this.prisma.user.findFirst({
                 where: {
@@ -121,7 +142,8 @@ export class AdminUsersService {
                 },
                 select: { id: true },
             });
-            if (dup) throw new ConflictException('Email hoặc username đã được sử dụng');
+            if (dup)
+                throw new ConflictException('Email hoặc username đã được sử dụng');
         }
 
         const user = await this.prisma.user.update({
@@ -131,17 +153,31 @@ export class AdminUsersService {
                 bio: dto.bio,
                 email: emailChanged ? email : undefined,
                 username: usernameChanged ? dto.username : undefined,
-                roleId: dto.role && dto.role !== target.role.name ? await this.roleId(dto.role) : undefined,
+                roleId:
+                    dto.role && dto.role !== target.role.name
+                        ? await this.roleId(dto.role)
+                        : undefined,
             },
             select: USER_SELECT,
         });
+        if (dto.role && dto.role !== target.role.name) {
+            await this.audit.log({
+                userId: user.id,
+                action: 'USER_ROLE_CHANGED',
+                entity: 'User',
+                entityId: String(id),
+                metadata: { from: target.role.name, to: dto.role }
+            })
+        }
         return toDto(user);
     }
 
-    //kích hoạt hoặc vô hiệu hóa 
+    //kích hoạt hoặc vô hiệu hóa
     async setStatus(actor: AuthUser, id: number, dto: UpdateUserStatusDto) {
         if (actor.id === id && !dto.isActive) {
-            throw new BadRequestException('Không thể tự vô hiệu hóa tài khoản của chính mình');
+            throw new BadRequestException(
+                'Không thể tự vô hiệu hóa tài khoản của chính mình',
+            );
         }
         await this.findOrThrow(id);
 
@@ -155,6 +191,14 @@ export class AdminUsersService {
                 });
             }
         });
+        await this.audit.log({
+            userId: actor.id,
+            action: 'USER_STATUS_CHANGED',
+            entity: 'User',
+            entityId: String(id),
+            metadata: { isActive: dto.isActive }
+        })
+
         return toDto(await this.findOrThrow(id));
     }
 }

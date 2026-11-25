@@ -1,7 +1,21 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
-import { Roles } from '../common/decorators/roles.decorator.js';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { Roles } from '../../common/decorators/roles.decorator.js';
 import { AdminCoursesService } from './admin-courses.service.js';
-import { AdminListQueryDto, CreateCourseDto, UpdateCourseDto, UpdateActiveDto } from './dto/admin-course-class.dto.js';
+import {
+  AdminListQueryDto,
+  CreateCourseDto,
+  UpdateCourseDto,
+  UpdateActiveDto,
+} from '../dto/admin-course-class.dto.js';
 
 @Roles('ADMIN')
 @Controller('admin/courses')
@@ -29,7 +43,10 @@ export class AdminCoursesController {
   }
 
   @Patch(':id/status')
-  setStatus(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateActiveDto) {
+  setStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateActiveDto,
+  ) {
     return this.courses.setStatus(id, dto.isActive);
   }
 }

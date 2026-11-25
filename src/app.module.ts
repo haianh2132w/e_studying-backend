@@ -24,6 +24,13 @@ import { QuizzesModule } from './quizzes/quizzes.module.js';
 import { OwnershipModule } from './ownership/ownership.module.js';
 import { InstructorModule } from './instructor/instructor.module.js';
 import { AdminModule } from './admin/admin.module.js';
+import { AuditModule } from './audit/audit.module.js';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AuditInterceptor } from './common/interceptors/audit.interceptor.js'
+import { UploadsModule } from './uploads/uploads.module.js';
+
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -44,7 +51,9 @@ import { AdminModule } from './admin/admin.module.js';
     QuizzesModule,
     OwnershipModule,
     InstructorModule,
-    AdminModule
+    AdminModule,
+    AuditModule,
+    UploadsModule
   ],
   controllers: [AppController],
   providers: [AppService,
@@ -52,6 +61,7 @@ import { AdminModule } from './admin/admin.module.js';
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_GUARD, useClass: CsrfGuard },
+    { provide: APP_INTERCEPTOR, useClass: AuditInterceptor }
   ],
 })
 export class AppModule { }

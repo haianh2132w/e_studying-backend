@@ -29,6 +29,7 @@ export class LessonsService {
         type: true,
         content: true,
         resourceUrl: true,
+        fileName:true,
         durationMin: true,
         isPreview: true,
         chapter: {

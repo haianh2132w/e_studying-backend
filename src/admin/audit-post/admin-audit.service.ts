@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { AuditQueryDto } from './dto/admin-audit-post.dto.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
+import { AuditQueryDto } from '../dto/admin-audit-post.dto.js';
 
 @Injectable()
 export class AdminAuditService {

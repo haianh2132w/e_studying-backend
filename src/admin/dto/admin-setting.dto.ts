@@ -17,11 +17,14 @@ export class CreateSettingDto {
   type: 'CATEGORY';
 
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
-  @IsString() @Length(2, 100)
+  @IsString()
+  @Length(2, 100)
   @Matches(/^[^<>]*$/, { message: 'Tên không được chứa ký tự < hoặc >' })
   name: string;
 
-  @IsOptional() @IsString() @MaxLength(1000)
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
   description?: string;
 }
 
@@ -29,24 +32,32 @@ export class CreateSettingDto {
 export class UpdateSettingDto {
   @IsOptional()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
-  @IsString() @Length(2, 100)
+  @IsString()
+  @Length(2, 100)
   @Matches(/^[^<>]*$/, { message: 'Tên không được chứa ký tự < hoặc >' })
   name?: string;
 
-  @IsOptional() @IsString() @MaxLength(1000)
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
   description?: string;
 }
 
-//  Query 
+//  Query
 export class SettingQueryDto extends PaginationDto {
-  @IsOptional() @IsString() @MaxLength(100)
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
   q?: string;
 
-  @IsOptional() @IsIn(['ROLE', 'CATEGORY'])
+  @IsOptional()
+  @IsIn(['ROLE', 'CATEGORY'])
   type?: 'ROLE' | 'CATEGORY';
 
   @IsOptional()
-  @Transform(({ value }) => (value === 'true' ? true : value === 'false' ? false : value))
+  @Transform(({ value }) =>
+    value === 'true' ? true : value === 'false' ? false : value,
+  )
   @IsBoolean()
   isActive?: boolean;
 }

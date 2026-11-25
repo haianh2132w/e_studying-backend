@@ -27,7 +27,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     res.status(status).json({
-      statusCode: status, message, path: req.url, timestamp: new Date().toISOString(),
+      statusCode: status, message, 
+      path: req.url, 
+      timestamp: new Date().toISOString(),
     });
   }
 }
