@@ -157,6 +157,8 @@ model Lesson {
   isPreview   Boolean          @default(false)
   status      ContentStatus    @default(DRAFT)
   progress    LessonProgress[]
+  fileKey     String?          @db.VarChar(100)
+  fileName    String?          @db.VarChar(255)
   @@index([chapterId, position])
 }
 

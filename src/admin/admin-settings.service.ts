@@ -1,9 +1,16 @@
 import {
-    BadRequestException, ConflictException, Injectable, NotFoundException,
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { SettingQueryDto, CreateSettingDto, UpdateSettingDto } from './dto/admin-setting.dto.js';
+import {
+    SettingQueryDto,
+    CreateSettingDto,
+    UpdateSettingDto,
+} from './dto/admin-setting.dto.js';
 
 const SETTING_SELECT = {
     id: true,
@@ -19,18 +26,23 @@ export class AdminSettingsService {
     constructor(private readonly prisma: PrismaService) { }
 
     private async findOrThrow(id: number) {
-        const setting = await this.prisma.setting.findUnique({ where: { id }, select: SETTING_SELECT });
+        const setting = await this.prisma.setting.findUnique({
+            where: { id },
+            select: SETTING_SELECT,
+        });
         if (!setting) throw new NotFoundException('Không tìm thấy cài đặt');
         return setting;
     }
 
-    // danh sách, kèm số nơi đang sử dụng 
+    // danh sách, kèm số nơi đang sử dụng
     async list(query: SettingQueryDto) {
         const { page, limit, q, type, isActive } = query;
         const where: Prisma.SettingWhereInput = {
             ...(type && { type }),
             ...(isActive !== undefined && { isActive }),
-            ...(q && { OR: [{ name: { contains: q } }, { description: { contains: q } }] }),
+            ...(q && {
+                OR: [{ name: { contains: q } }, { description: { contains: q } }],
+            }),
         };
         const [rows, total] = await this.prisma.$transaction([
             this.prisma.setting.findMany({
@@ -40,7 +52,9 @@ export class AdminSettingsService {
                 orderBy: [{ type: 'asc' }, { name: 'asc' }],
                 select: {
                     ...SETTING_SELECT,
-                    _count: { select: { users: true, courses: true, classes: true, posts: true } },
+                    _count: {
+                        select: { users: true, courses: true, classes: true, posts: true },
+                    },
                 },
             }),
             this.prisma.setting.count({ where }),
@@ -66,7 +80,7 @@ export class AdminSettingsService {
         });
     }
 
-    //  sửa 
+    //  sửa
     async update(id: number, dto: UpdateSettingDto) {
         const current = await this.findOrThrow(id);
 
@@ -88,7 +102,7 @@ export class AdminSettingsService {
         });
     }
 
-    //  bật hoặc tắt 
+    //  bật hoặc tắt
     async setStatus(id: number, isActive: boolean) {
         const current = await this.findOrThrow(id);
         if (current.type === 'ROLE') {

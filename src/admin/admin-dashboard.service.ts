@@ -22,10 +22,16 @@ export class AdminDashboardService {
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     const [
-      totalUsers, students, instructors, admins,
-      activeCourses, activeClasses,
-      revenueAll, revenue30,
-      perCourse, topClassRows,
+      totalUsers,
+      students,
+      instructors,
+      admins,
+      activeCourses,
+      activeClasses,
+      revenueAll,
+      revenue30,
+      perCourse,
+      topClassRows,
     ] = await Promise.all([
       this.prisma.user.count(),
       this.prisma.user.count({ where: { role: { name: 'STUDENT' } } }),
@@ -33,7 +39,10 @@ export class AdminDashboardService {
       this.prisma.user.count({ where: { role: { name: 'ADMIN' } } }),
       this.prisma.course.count({ where: { isActive: true } }),
       this.prisma.class.count({ where: { isActive: true } }),
-      this.prisma.payment.aggregate({ _sum: { amount: true }, where: { status: 'SUCCESS' } }),
+      this.prisma.payment.aggregate({
+        _sum: { amount: true },
+        where: { status: 'SUCCESS' },
+      }),
       this.prisma.payment.aggregate({
         _sum: { amount: true },
         where: { status: 'SUCCESS', paidAt: { gte: since } },
@@ -59,7 +68,11 @@ export class AdminDashboardService {
     const courses = courseIds.length
       ? await this.prisma.course.findMany({
           where: { id: { in: courseIds } },
-          select: { id: true, title: true, instructor: { select: { id: true, fullName: true } } },
+          select: {
+            id: true,
+            title: true,
+            instructor: { select: { id: true, fullName: true } },
+          },
         })
       : [];
     const courseMap = new Map(courses.map((c) => [c.id, c]));
@@ -74,7 +87,10 @@ export class AdminDashboardService {
       }));
 
     // Top giảng viên: cộng số đăng ký của các khóa họ phụ trách
-    const byInstructor = new Map<number, { id: number; fullName: string; enrollments: number }>();
+    const byInstructor = new Map<
+      number,
+      { id: number; fullName: string; enrollments: number }
+    >();
     for (const p of perCourse) {
       const course = courseMap.get(p.courseId as number);
       if (!course) continue;
