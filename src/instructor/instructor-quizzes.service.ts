@@ -20,7 +20,7 @@ export class InstructorQuizzesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly ownership: OwnershipService,
-  ) {}
+  ) { }
 
   // Quiz chỉ xuất bản được khi có câu hỏi và mỗi câu có đúng 1 đáp án đúng
   private async assertPublishable(quizId: number) {

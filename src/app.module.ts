@@ -28,6 +28,9 @@ import { AuditModule } from './audit/audit.module.js';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor.js'
 import { UploadsModule } from './uploads/uploads.module.js';
+import { ImportsModule } from './imports/import.module.js';
+import { CloudinaryModule } from './cloudinary/cloudinary.module.js';
+import { PaymentsModule } from './payments/payments.module.js';
 
 
 
@@ -53,7 +56,10 @@ import { UploadsModule } from './uploads/uploads.module.js';
     InstructorModule,
     AdminModule,
     AuditModule,
-    UploadsModule
+    UploadsModule,
+    ImportsModule,
+    CloudinaryModule,
+    PaymentsModule
   ],
   controllers: [AppController],
   providers: [AppService,

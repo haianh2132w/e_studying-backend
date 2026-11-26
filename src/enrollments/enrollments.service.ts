@@ -6,11 +6,12 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { AuthUser } from '../common/types/auth-user.js';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto.js';
+import { makeTxnRef } from '../payments/vnpay.util.js';
+
 
 const CLASS_DETAIL_SELECT = {
     id: true,
@@ -32,11 +33,8 @@ const CLASS_DETAIL_SELECT = {
 export class EnrollmentsService {
     constructor(private readonly prisma: PrismaService) { }
 
-    private newTxnRef() {
-        return `PRG${Date.now()}${crypto.randomBytes(4).toString('hex')}`;
-    }
 
-    // ---------- Đăng ký (UC 15, 16) ----------
+    //Đăng ký 
     async create(user: AuthUser, dto: CreateEnrollmentDto) {
         const { courseId, classId } = dto;
         if ((courseId && classId) || (!courseId && !classId)) {
@@ -86,7 +84,7 @@ export class EnrollmentsService {
                 });
 
             // Mỗi lần đăng ký (hoặc thử thanh toán lại) có mã giao dịch mới
-            const txnRef = this.newTxnRef();
+            const txnRef = makeTxnRef(enrollment.id);
             const method = isFree ? 'FREE' : 'VNPAY';
             const status = isFree ? 'SUCCESS' : 'PENDING';
             const paidAt = isFree ? new Date() : null;
@@ -115,7 +113,7 @@ export class EnrollmentsService {
         });
     }
 
-    // ---------- Lịch sử đăng ký (UC 26) ----------
+    // Lịch sử đăng ký 
     async listEnrollments(userId: number, { page, limit }: PaginationDto) {
         const where = { userId };
         const [items, total] = await this.prisma.$transaction([
@@ -139,7 +137,7 @@ export class EnrollmentsService {
         return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
     }
 
-    // ---------- Khóa học của tôi (UC 18) ----------
+    // Khóa học của tôi 
     async listMyCourses(userId: number, { page, limit }: PaginationDto) {
         const where: Prisma.CourseWhereInput = {
             isActive: true,
@@ -178,7 +176,7 @@ export class EnrollmentsService {
         return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
     }
 
-    // ---------- Lớp học của tôi (UC 19) ----------
+    //  Lớp học của tôi
     async listMyClasses(userId: number, { page, limit }: PaginationDto) {
         const where = { userId, class: { isActive: true } };
         const [rows, total] = await this.prisma.$transaction([
@@ -208,7 +206,7 @@ export class EnrollmentsService {
         return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
     }
 
-    // ---------- Chi tiết lớp đã tham gia (UC 20) ----------
+    //  Chi tiết lớp đã tham gia 
     async getMyClass(userId: number, classId: number) {
         const member = await this.prisma.classStudent.findUnique({
             where: { classId_userId: { classId, userId } },

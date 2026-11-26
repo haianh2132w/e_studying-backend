@@ -28,5 +28,6 @@ import { InstructorClassesController } from './instructor-classes.controller.js'
     InstructorQuizzesController,
     InstructorClassesController
   ],
+  exports:[InstructorClassesService]
 })
 export class InstructorModule {}

@@ -7,7 +7,7 @@ const CACHE_TTL_MS = 2 * 60 * 1000; // dashboard chấp nhận số liệu cũ t
 export class AdminDashboardService {
   private cache: { at: number; data: Record<string, unknown> } | null = null;
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async getDashboard() {
     if (this.cache && Date.now() - this.cache.at < CACHE_TTL_MS) {
@@ -67,13 +67,13 @@ export class AdminDashboardService {
     const courseIds = perCourse.map((p) => p.courseId as number);
     const courses = courseIds.length
       ? await this.prisma.course.findMany({
-          where: { id: { in: courseIds } },
-          select: {
-            id: true,
-            title: true,
-            instructor: { select: { id: true, fullName: true } },
-          },
-        })
+        where: { id: { in: courseIds } },
+        select: {
+          id: true,
+          title: true,
+          instructor: { select: { id: true, fullName: true } },
+        },
+      })
       : [];
     const courseMap = new Map(courses.map((c) => [c.id, c]));
 
@@ -109,9 +109,9 @@ export class AdminDashboardService {
     const classIds = topClassRows.map((p) => p.classId as number);
     const classes = classIds.length
       ? await this.prisma.class.findMany({
-          where: { id: { in: classIds } },
-          select: { id: true, title: true },
-        })
+        where: { id: { in: classIds } },
+        select: { id: true, title: true },
+      })
       : [];
     const classMap = new Map(classes.map((c) => [c.id, c.title]));
     const topClasses = topClassRows.map((p) => ({
