@@ -5,9 +5,7 @@ import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 import { Roles } from '../common/decorators/roles.decorator.js';
 import type { AuthUser } from '../common/types/auth-user.js';
 import { InstructorLessonsService } from './instructor-lessons.service.js';
-import { CreateLessonDto } from './dto/create-lesson.dto.js';
-import { UpdateLessonDto } from './dto/update-lesson.dto.js';
-import { ReorderDto } from './dto/reorder.dto.js';
+import { CreateLessonDto, ReorderDto, UpdateLessonDto } from './dto/instructor-lesson.dto.js';
 
 @Roles('INSTRUCTOR', 'ADMIN')
 @Controller('instructor')

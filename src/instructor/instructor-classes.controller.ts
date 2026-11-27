@@ -7,11 +7,13 @@ import { Roles } from '../common/decorators/roles.decorator.js';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import type { AuthUser } from '../common/types/auth-user.js';
 import { InstructorClassesService } from './instructor-classes.service.js';
-import { AddClassStudentDto } from './dto/add-class-student.dto.js';
-import { UpdateClassStudentDto } from './dto/update-class-student.dto.js';
-import { ClassStudentQueryDto } from './dto/class-student-query.dto.js';
-import { UpdateClassSyllabusDto } from './dto/update-class-syllabus.dto.js';
-import { SetClassCoursesDto } from './dto/set-class-courses.dto.js';
+import {
+  AddClassStudentDto,
+  ClassStudentQueryDto,
+  SetClassCoursesDto,
+  UpdateClassStudentDto,
+  UpdateClassSyllabusDto,
+} from './dto/instructor-class.dto.js';
 
 @Roles('INSTRUCTOR', 'ADMIN')
 @Controller('instructor')

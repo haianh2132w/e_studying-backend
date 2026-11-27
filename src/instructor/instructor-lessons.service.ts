@@ -4,9 +4,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { OwnershipService } from '../ownership/ownership.service.js';
 import { AuthUser } from '../common/types/auth-user.js';
 import { sanitizeContent } from '../common/utils/sanitize.js';
-import { CreateLessonDto } from './dto/create-lesson.dto.js';
-import { UpdateLessonDto } from './dto/update-lesson.dto.js';
-import { ReorderDto } from './dto/reorder.dto.js';
+import { CreateLessonDto, ReorderDto, UpdateLessonDto } from './dto/instructor-lesson.dto.js';
 
 const LESSON_SELECT = {
   id: true,

@@ -3,9 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { OwnershipService } from '../ownership/ownership.service.js';
 import { AuthUser } from '../common/types/auth-user.js';
-import { CreateQuizDto } from './dto/create-quiz.dto.js';
-import { UpdateQuizDto } from './dto/update-quiz.dto.js';
-import { CreateQuestionDto } from './dto/create-question.dto.js';
+import { CreateQuestionDto, CreateQuizDto, UpdateQuizDto } from './dto/instructor-quiz.dto.js';
 
 const QUIZ_SELECT = {
   id: true,

@@ -7,7 +7,7 @@ import * as crypto from 'crypto';
 import ExcelJS from 'exceljs';
 import { AuditService } from '../audit/audit.service.js';
 import type { AuthUser } from '../common/types/auth-user.js';
-import { CreateQuizDto } from '../instructor/dto/create-quiz.dto.js';
+import { CreateQuizDto } from '../instructor/dto/instructor-quiz.dto.js';
 import { InstructorClassesService } from '../instructor/instructor-classes.service.js';
 import { OwnershipService } from '../ownership/ownership.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';

@@ -5,9 +5,7 @@ import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 import { Roles } from '../common/decorators/roles.decorator.js';
 import type { AuthUser } from '../common/types/auth-user.js';
 import { InstructorChaptersService } from './instructor-chapters.service.js';
-import { CreateChapterDto } from './dto/create-chapter.dto.js';
-import { UpdateChapterDto } from './dto/update-chapter.dto.js';
-import { ReorderDto } from './dto/reorder.dto.js';
+import { CreateChapterDto, ReorderDto, UpdateChapterDto } from './dto/instructor-chapter.dto.js';
 
 @Roles('INSTRUCTOR', 'ADMIN')
 @Controller('instructor')

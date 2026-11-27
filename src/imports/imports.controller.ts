@@ -8,7 +8,7 @@ import type { Response } from 'express';
 import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 import { Roles } from '../common/decorators/roles.decorator.js';
 import type { AuthUser } from '../common/types/auth-user.js';
-import { CreateQuizDto } from '../instructor/dto/create-quiz.dto.js';
+import { CreateQuizDto } from '../instructor/dto/instructor-quiz.dto.js';
 import { ADMIN_ONLY_TEMPLATES } from './import-schemas.js';
 import { ImportsService } from './imports.service.js';
 import { XLSX_MIME } from './xlsx-reader.js';
