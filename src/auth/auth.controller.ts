@@ -1,17 +1,18 @@
-import { Body, Controller, Post, HttpCode, Req, Res } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, Req, Res, Ip } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
+import type { Request, Response } from 'express';
+import * as crypto from 'crypto';
 import { Public } from '../common/decorators/public.decorator.js';
 import { SkipCsrf } from '../common/decorators/skip-csrf.decorator.js';
 import { AuthService } from './auth.service.js';
-import { RegisterDto } from './dto/register.dto.js';
-import { VerifyEmailDto } from './dto/verify-email.dto.js';
-import { ResendCodeDto } from './dto/resend-code.dto.js';
-import type { Request, Response } from 'express';
-import * as crypto from 'crypto';
-import { LoginDto } from './dto/login.dto.js';
-import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
-import { ResetPasswordDto } from './dto/reset-password.dto.js';
-import { Ip } from '@nestjs/common';
+import {
+  ForgotPasswordDto,
+  LoginDto,
+  RegisterDto,
+  ResendCodeDto,
+  ResetPasswordDto,
+  VerifyEmailDto,
+} from './dto/auth.dto.js';
 
 @Controller('auth')
 export class AuthController {
@@ -62,7 +63,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Ip() ip: string,
   ) {
-    const { access, refresh, user } = await this.auth.login(dto,ip);
+    const { access, refresh, user } = await this.auth.login(dto, ip);
     this.setAuthCookies(res, access, refresh);
     return { user };
   }

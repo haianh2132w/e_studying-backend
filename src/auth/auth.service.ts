@@ -1,20 +1,26 @@
-import { BadRequestException, ConflictException, Injectable } from "@nestjs/common";
-import { TokenType } from "@prisma/client";
-import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto';
-import { PrismaService } from "../prisma/prisma.service.js";
-import { MailService } from "../mail/mail.service.js";
-import { RegisterDto } from "./dto/register.dto.js";
-import { VerifyEmailDto } from "./dto/verify-email.dto.js";
-import { ResendCodeDto } from "./dto/resend-code.dto.js";
-import { ForbiddenException, UnauthorizedException } from '@nestjs/common'; // gộp vào dòng import @nestjs/common có sẵn
+import {
+    BadRequestException,
+    ConflictException,
+    ForbiddenException,
+    Injectable,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from './dto/login.dto.js';
-import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
-import { ResetPasswordDto } from './dto/reset-password.dto.js';
-import { AuditService } from "../audit/audit.service.js";
-import { audit } from "rxjs";
+import { TokenType } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import { AuditService } from '../audit/audit.service.js';
+import { MailService } from '../mail/mail.service.js';
+import { PrismaService } from '../prisma/prisma.service.js';
+import {
+    ForgotPasswordDto,
+    LoginDto,
+    RegisterDto,
+    ResendCodeDto,
+    ResetPasswordDto,
+    VerifyEmailDto,
+} from './dto/auth.dto.js';
 @Injectable()
 export class AuthService {
     // Hash giả để bcrypt.compare luôn chạy khi user không tồn tại (chống timing attack)
@@ -168,8 +174,8 @@ export class AuthService {
 
 
         const tokens = await this.issueTokens(user);
-        if (user.role.name !=='STUDENT'){
-            await this.audit.log({userId:user.id,action:'LOGIN_SUCCESS',entity:'Auth',ip})
+        if (user.role.name !== 'STUDENT') {
+            await this.audit.log({ userId: user.id, action: 'LOGIN_SUCCESS', entity: 'Auth', ip })
         }
         return {
             ...tokens,

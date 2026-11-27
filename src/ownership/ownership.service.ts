@@ -1,4 +1,4 @@
-import { ForbiddenException,Inject,Injectable,NotFoundException } from "@nestjs/common";
+import { ForbiddenException,Injectable,NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 import type { AuthUser } from "../common/types/auth-user.js";
 
@@ -7,7 +7,7 @@ export class OwnershipService{
     constructor(private readonly prisma:PrismaService){}
     private check(user:AuthUser,instructorId:number,what:string){
         if(user.role!=='ADMIN'&&instructorId!==user.id){
-            throw new ForbiddenException('Bạn không phải giảng viên của ${what} này');
+            throw new ForbiddenException(`Bạn không phải giảng viên của ${what} này`);
         }
     }
     async assertOwnsCourse(user:AuthUser,courseId:number){

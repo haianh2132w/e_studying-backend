@@ -3,9 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { OwnershipService } from '../ownership/ownership.service.js';
 import { AuthUser } from '../common/types/auth-user.js';
-import { CreateChapterDto } from './dto/create-chapter.dto.js';
-import { UpdateChapterDto } from './dto/update-chapter.dto.js';
-import { ReorderDto } from './dto/reorder.dto.js';
+import { CreateChapterDto, ReorderDto, UpdateChapterDto } from './dto/instructor-chapter.dto.js';
 
 const CHAPTER_SELECT = {
   id: true,

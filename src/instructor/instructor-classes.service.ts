@@ -6,11 +6,13 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { OwnershipService } from '../ownership/ownership.service.js';
 import { AuthUser } from '../common/types/auth-user.js';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
-import { AddClassStudentDto } from './dto/add-class-student.dto.js';
-import { UpdateClassStudentDto } from './dto/update-class-student.dto.js';
-import { ClassStudentQueryDto } from './dto/class-student-query.dto.js';
-import { UpdateClassSyllabusDto } from './dto/update-class-syllabus.dto.js';
-import { SetClassCoursesDto } from './dto/set-class-courses.dto.js';
+import {
+  AddClassStudentDto,
+  ClassStudentQueryDto,
+  SetClassCoursesDto,
+  UpdateClassStudentDto,
+  UpdateClassSyllabusDto,
+} from './dto/instructor-class.dto.js';
 
 @Injectable()
 export class InstructorClassesService {
