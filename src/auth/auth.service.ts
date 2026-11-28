@@ -25,8 +25,9 @@ import {
 export class AuthService {
     // Hash giả để bcrypt.compare luôn chạy khi user không tồn tại (chống timing attack)
     private readonly dummyHash = bcrypt.hashSync('no-user', 12);
-    private readonly audit: AuditService;
+    
     constructor(
+        private readonly audit: AuditService,
         private readonly prisma: PrismaService,
         private readonly mail: MailService,
         private readonly jwt: JwtService,

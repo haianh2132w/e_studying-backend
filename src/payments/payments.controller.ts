@@ -6,7 +6,7 @@ import { PaymentsService } from "./payments.service.js";
 
 @Controller('payments')
 @Roles('STUDENT', 'INSTRUCTOR', 'ADMIN')
-export class PaymentController {
+export class PaymentsController {
     constructor(private readonly payments: PaymentsService) { }
     // Frontend gọi lặp 3-5 giây/lần để biết đã thanh toán chưa
     @Get(':txnRef/status')
