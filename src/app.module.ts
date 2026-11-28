@@ -33,7 +33,6 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module.js';
 import { PaymentsModule } from './payments/payments.module.js';
 
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -59,7 +58,8 @@ import { PaymentsModule } from './payments/payments.module.js';
     UploadsModule,
     ImportsModule,
     CloudinaryModule,
-    PaymentsModule
+    PaymentsModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService,

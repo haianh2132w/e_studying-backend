@@ -10,9 +10,8 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { AuthUser } from '../common/types/auth-user.js';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto.js';
-import { makeTxnRef } from '../payments/vnpay.util.js';
-
-
+import * as crypto from 'crypto';
+import { PaymentsService } from '../payments/payments.service.js';
 const CLASS_DETAIL_SELECT = {
     id: true,
     title: true,
@@ -31,8 +30,13 @@ const CLASS_DETAIL_SELECT = {
 
 @Injectable()
 export class EnrollmentsService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService,
+        private readonly payments:PaymentsService
+    ) { }
 
+    private newTxnRef() {
+        return `PRG${Date.now()}${crypto.randomBytes(4).toString('hex')}`;
+    }
 
     //Đăng ký 
     async create(user: AuthUser, dto: CreateEnrollmentDto) {
@@ -84,8 +88,8 @@ export class EnrollmentsService {
                 });
 
             // Mỗi lần đăng ký (hoặc thử thanh toán lại) có mã giao dịch mới
-            const txnRef = makeTxnRef(enrollment.id);
-            const method = isFree ? 'FREE' : 'VNPAY';
+            const txnRef = this.newTxnRef();
+            const method = isFree ? 'FREE' : 'QR';
             const status = isFree ? 'SUCCESS' : 'PENDING';
             const paidAt = isFree ? new Date() : null;
             await tx.payment.upsert({
@@ -109,6 +113,7 @@ export class EnrollmentsService {
                 requiresPayment: !isFree,
                 amount: price,
                 txnRef,
+                qrUrl:isFree?null:this.payments.buildQrUrl(price,txnRef)
             };
         });
     }
